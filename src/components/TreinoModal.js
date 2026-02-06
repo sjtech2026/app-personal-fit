@@ -14,6 +14,20 @@ const TreinoModal = ({ treino, isOpen, onClose }) => {
     setVideoModal({ isOpen: false, exerciseName: '' });
   };
 
+  // Função para formatar o caminho do GIF
+  const getGifPath = (exerciseName) => {
+    if (!exerciseName) return '';
+    
+    // Converter para minúsculo, remover acentos e hífens, substituir espaços por hífens
+    const formattedName = exerciseName
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+      .replace(/\s+/g, '-'); // Substitui espaços por hífens
+    
+    return `/exercicios/${formattedName}.gif`;
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
@@ -183,12 +197,15 @@ const TreinoModal = ({ treino, isOpen, onClose }) => {
             <div className="p-6">
               {/* Placeholder do Vídeo */}
               <div className="bg-slate-800 rounded-lg h-48 flex items-center justify-center mb-6">
-                <div className="text-center">
-                  <PlayCircle size={48} className="text-gray-500 mx-auto mb-3" />
-                  <p className="text-gray-400 text-sm">
-                    Vídeo da execução de {videoModal.exerciseName} em breve
-                  </p>
-                </div>
+                <img 
+                  src={getGifPath(videoModal.exerciseName)} 
+                  alt={videoModal.exerciseName}
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '';
+                  }}
+                />
               </div>
 
               {/* Botão Fechar */}
